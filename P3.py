@@ -11,10 +11,18 @@ block_size = 8  # 8
 cache_placement_type = "Direct"
 write_policy = "back"
 
-CacheStruct = namedtuple("CacheStruct", "validBit Tag dirtyBit")
+#named tuples are immutable. Use a class instead
+class CacheClass:
+	validBit = 0
+	Tag = 0x0000
+	dirtyBit = 0
+	
+initialLine = CacheClass()
+	
+#CacheStruct = namedtuple("CacheStruct", "validBit Tag dirtyBit")
 #For direct mapped, valid bit set to 1 when data is put in a line in the cache. Handles possible bad data at start
 
-initialLine = CacheStruct(validBit=0, Tag=0x0000, dirtyBit=0)
+#initialLine = CacheStruct(validBit=0, Tag=0x0000, dirtyBit=0)
 
 #create a list of height "block_count" and width: TODO
 #width, height
@@ -32,13 +40,13 @@ print(CacheMatrix[4][0])
 def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix):
 
 	#convert the_address to an int
-	int(the_address, 16) #convert base 16 string to an int
+	convertedAddress = int(the_address, 16) #convert base 16 string to an int
 	
 	#first, calculate the stuff
 	the_block_count = int(cache_size / block_size) #needed internally
 	
-	theTag = int(the_address/the_cache_size)	# tag = floor(memoryAddress/cacheSize)
-	theIndex = int(the_address/the_block_size) % the_block_count # index = floor
+	theTag = int(convertedAddress/the_cache_size)	# tag = floor(memoryAddress/cacheSize)
+	theIndex = int(convertedAddress/the_block_size) % the_block_count # index = floor
 	#I don't think we care about block offset (which byte inside block), because we don't care about the actual data. Could be wrong TODO
 	
 	#next, update the tag and valid bit at a specified index. TODO add in dirtyBit modification based on write policy.
@@ -48,6 +56,10 @@ def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix):
 	
 	return the_cache_matrix		#finally, return the cache matrix
 	
+print("Original	", "ValidBit: ", CacheMatrix[0][0].validBit, " Tag: ", CacheMatrix[0][0].Tag)
+CacheMatrix = writeAddress("04000000", cache_size, block_size, CacheMatrix)
+print("Updated	", "ValidBit: ", CacheMatrix[0][0].validBit, " Tag: ", CacheMatrix[0][0].Tag)
+
 
 	
 	
