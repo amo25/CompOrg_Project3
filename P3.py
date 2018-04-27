@@ -21,9 +21,33 @@ initialLine = CacheStruct(validBit=0, Tag=0x0000, dirtyBit=0)
 width = 1
 #todo change width
 block_count = int(cache_size / block_size)
-#build the Cache, initilizeing every element with junk data (validBit == 0)
+#build the Cache, initializing every element with junk data (validBit == 0)
 CacheMatrix = [[initialLine for x in range(width)] for y in range(block_count)]
 
 #CacheMatrix[index][entry in that line]
 print(CacheMatrix[0][0].validBit)  #todo remove
 print(CacheMatrix[4][0])
+
+#write data
+def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix):
+
+	#convert the_address to an int
+	int(the_address, 16) #convert base 16 string to an int
+	
+	#first, calculate the stuff
+	the_block_count = int(cache_size / block_size) #needed internally
+	
+	theTag = int(the_address/the_cache_size)	# tag = floor(memoryAddress/cacheSize)
+	theIndex = int(the_address/the_block_size) % the_block_count # index = floor
+	#I don't think we care about block offset (which byte inside block), because we don't care about the actual data. Could be wrong TODO
+	
+	#next, update the tag and valid bit at a specified index. TODO add in dirtyBit modification based on write policy.
+	#TODO change [0] to a specified entry for 2W, 4W, FA
+	the_cache_matrix[theIndex][0].validBit = 1
+	the_cache_matrix[theIndex][0].Tag = theTag
+	
+	return the_cache_matrix		#finally, return the cache matrix
+	
+
+	
+	
