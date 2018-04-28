@@ -85,8 +85,8 @@ if (addressHit):
 else:
 	print("Original Address Miss")
 	
-CacheMatrix = writeAddress("04000000", cache_size, block_size, CacheMatrix)
-print("Updated	", "ValidBit: ", CacheMatrix[0][0].validBit, " Tag: ", CacheMatrix[0][0].Tag)
+#CacheMatrix = writeAddress("04000000", cache_size, block_size, CacheMatrix)
+#print("Updated	", "ValidBit: ", CacheMatrix[0][0].validBit, " Tag: ", CacheMatrix[0][0].Tag)
 
 addressHit = readAddressHit("04000000", cache_size, block_size, CacheMatrix)	#expect hit
 if (addressHit):
@@ -94,7 +94,28 @@ if (addressHit):
 else:
 	print("Updated Address Miss")
 
+#todo parse all the files in the folder
+#parse the file
+file = open("test1.trace", "r")
 
-
+#read the file line by line
+file1 = file.readlines()
+for x in file1:
+	#print(x)
+	#if the line starts with "r" (read), read function
+	if (x[0] == "r"):
+		address = x[7:15]
+		addressHit = readAddressHit(address, cache_size, block_size, CacheMatrix)
+		
+		#todo counter
+		if (addressHit):
+			print("Address Hit")
+		else:
+			print("Address Miss")
+	
+	else if(x[0] == "w"):
+		
+			
+	
 	
 	
