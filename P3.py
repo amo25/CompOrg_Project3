@@ -54,11 +54,46 @@ def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix):
 	the_cache_matrix[theIndex][0].validBit = 1
 	the_cache_matrix[theIndex][0].Tag = theTag
 	
-	return the_cache_matrix		#finally, return the cache matrix
+	return the_cache_matrix		#finally, return the cache matrix. We can optimize this later, if pass by reference is available in python. TODO if too slow
+	
+#read data
+def readAddressHit(the_address, the_cache_size, the_block_size, the_cache_matrix):
+	
+	#TODO this is repeated code from writeAddress. May be able to optimize in some way if slow
+	#convert the_address to an int
+	convertedAddress = int(the_address, 16) #convert base 16 string to an int
+	
+	#first, calculate the stuff
+	the_block_count = int(cache_size / block_size) #needed internally
+	
+	theTag = int(convertedAddress/the_cache_size)	# tag = floor(memoryAddress/cacheSize)
+	theIndex = int(convertedAddress/the_block_size) % the_block_count # index = floor
+	#I don't think we care about block offset (which byte inside block), because we don't care about the actual data. Could be wrong TODO
+	
+	if ((the_cache_matrix[theIndex][0].validBit == 1) and (the_cache_matrix[theIndex][0].Tag == theTag)):
+		address_hit = True
+	else:
+		address_hit = False
+		
+	return address_hit
 	
 print("Original	", "ValidBit: ", CacheMatrix[0][0].validBit, " Tag: ", CacheMatrix[0][0].Tag)
+
+addressHit = readAddressHit("04000000", cache_size, block_size, CacheMatrix)	#expect miss
+if (addressHit):
+	print("Original Address Hit")
+else:
+	print("Original Address Miss")
+	
 CacheMatrix = writeAddress("04000000", cache_size, block_size, CacheMatrix)
 print("Updated	", "ValidBit: ", CacheMatrix[0][0].validBit, " Tag: ", CacheMatrix[0][0].Tag)
+
+addressHit = readAddressHit("04000000", cache_size, block_size, CacheMatrix)	#expect hit
+if (addressHit):
+	print("Updated Address Hit")
+else:
+	print("Updated Address Miss")
+
 
 
 	
