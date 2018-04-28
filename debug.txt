@@ -1,0 +1,10 @@
+Read.	address: 0x04000000	Index: 0	Tag: 65536	hit
+Write.	address: 0x02000000	Index: 0	Tag: 32768	miss
+Read.	address: 0x04000008	Index: 1	Tag: 65536	miss
+Read.	address: 0x04002008	Index: 1	Tag: 65544	miss
+Read.	address: 0x04000308	Index: 97	Tag: 65536	miss
+Read.	address: 0x04002004	Index: 0	Tag: 65544	miss
+Read.	address: 0x04002004	Index: 0	Tag: 65544	hit
+Read.	address: 0x04000D0C	Index: 33	Tag: 65539	miss
+Read.	address: 0x040000A8	Index: 21	Tag: 65536	miss
+Read.	address: 0x0400D000	Index: 0	Tag: 65588	miss

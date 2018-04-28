@@ -9,7 +9,7 @@ from collections import namedtuple  #for structs
 cache_size = 1024  # 1K
 block_size = 8  # 8
 cache_placement_type = "Direct"
-write_policy = "back"
+write_policy = "WB"
 
 #named tuples are immutable. Use a class instead
 class CacheClass:
@@ -43,7 +43,7 @@ def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix):
 	convertedAddress = int(the_address, 16) #convert base 16 string to an int
 	
 	#first, calculate the stuff
-	the_block_count = int(cache_size / block_size) #needed internally
+	the_block_count = int(the_cache_size / the_block_size) #needed internally
 	
 	theTag = int(convertedAddress/the_cache_size)	# tag = floor(memoryAddress/cacheSize)
 	theIndex = int(convertedAddress/the_block_size) % the_block_count # index = floor
@@ -51,10 +51,14 @@ def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix):
 	
 	#next, update the tag and valid bit at a specified index. TODO add in dirtyBit modification based on write policy.
 	#TODO change [0] to a specified entry for 2W, 4W, FA
-	the_cache_matrix[theIndex][0].validBit = 1
-	the_cache_matrix[theIndex][0].Tag = theTag
+	if ((the_cache_matrix[theIndex][0].validBit == 1) and (the_cache_matrix[theIndex][0].Tag == theTag)):
+		address_hit = True
+	else:
+		address_hit = False
+		the_cache_matrix[theIndex][0].validBit = 1
+		the_cache_matrix[theIndex][0].Tag = theTag
 	
-	return the_cache_matrix		#finally, return the cache matrix. We can optimize this later, if pass by reference is available in python. TODO if too slow
+	return (the_cache_matrix, address_hit)		#finally, return the cache matrix. We can optimize this later, if pass by reference is available in python. TODO if too slow
 	
 #read data
 def readAddressHit(the_address, the_cache_size, the_block_size, the_cache_matrix):
@@ -64,11 +68,13 @@ def readAddressHit(the_address, the_cache_size, the_block_size, the_cache_matrix
 	convertedAddress = int(the_address, 16) #convert base 16 string to an int
 	
 	#first, calculate the stuff
-	the_block_count = int(cache_size / block_size) #needed internally
+	the_block_count = int(the_cache_size / the_block_size) #needed internally
 	
 	theTag = int(convertedAddress/the_cache_size)	# tag = floor(memoryAddress/cacheSize)
 	theIndex = int(convertedAddress/the_block_size) % the_block_count # index = floor
 	#I don't think we care about block offset (which byte inside block), because we don't care about the actual data. Could be wrong TODO
+	
+	print("Read valid bit: ", the_cache_matrix[theIndex][0].validBit)
 	
 	if ((the_cache_matrix[theIndex][0].validBit == 1) and (the_cache_matrix[theIndex][0].Tag == theTag)):
 		address_hit = True
@@ -104,30 +110,56 @@ numReads = 0
 numHits = 0
 #todo parse all the files in the folder? Or just "test.trace"?
 #parse the file
-file = open("test3.trace", "r")
+file = open("test2.trace", "r")
 
 #store results
-wFile = open("myTest3.result", "w+")
+wFile = open("myTest2.result", "w+")
+
+#TODO debug
+debugFile = open("debug.txt", "w+")
 
 #read the file line by line
 file1 = file.readlines()
 for x in file1:
+
+	numReads = numReads + 1 #todo change name
 	#print(x)
 	#if the line starts with "r" (read), read function
 	if (x[0] == "r"):
-		numReads = numReads + 1
 		address = x[7:15]
 		addressHit = readAddressHit(address, cache_size, block_size, CacheMatrix)
 		
 		#todo counter
 		if (addressHit):
 			numHits = numHits+1
-		#else:
-			#print("Address Miss")
+			hitString = "hit"	#debug
+		else:
+			hitString = "miss"	#debug
+			
+		#debug
+		convertedAddress = int(address, 16)
+		the_block_count = int(cache_size / block_size)
+		theTag = int(convertedAddress/cache_size)
+		theIndex = int(convertedAddress/block_size) % the_block_count
+		debugString = "Read.	address: 0x"+ address + "	Index: " + str(theIndex) + "	Tag: " + str(theTag) + "	" + hitString + "\n"
+		debugFile.write(debugString)
 	
 	elif (x[0] == "w"):
 		address = x[8:16]
-		CacheMatrix = writeAddress(address, cache_size, block_size, CacheMatrix)
+		(CacheMatrix, addressHit) = writeAddress(address, cache_size, block_size, CacheMatrix)
+		if (addressHit):
+			numHits = numHits+1
+			hitString = "hit"	#debug
+		else:
+			hitString = "miss"	#debug
+			
+		#debug
+		convertedAddress = int(address, 16)
+		the_block_count = int(cache_size / block_size)
+		theTag = int(convertedAddress/cache_size)
+		theIndex = int(convertedAddress/block_size) % the_block_count
+		debugString = "Write.	address: 0x"+ address + "	Index: " + str(theIndex) + "	Tag: " + str(theTag) + "	" + hitString + "\n"
+		debugFile.write(debugString)
 		
 hitRate = numHits/numReads
 wFile.write("Hit Rate: %.2f\n" % hitRate)
