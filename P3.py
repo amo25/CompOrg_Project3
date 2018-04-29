@@ -17,13 +17,26 @@ def buildCache(cache_size, block_size, cache_placement_type, write_policy):
 
     #For direct mapped, valid bit set to 1 when data is put in a line in the cache. Handles possible bad data at start
 
-    #initialLine = CacheStruct(validBit=0, Tag=0x0000, dirtyBit=0)
+    #todo change width
+    block_count = int(cache_size / block_size)
 
     #create a list of height "block_count" and width: TODO
     #width, height
-    width = 1
-    #todo change width
-    block_count = int(cache_size / block_size)
+    if (cache_placement_type == "DM"):
+        width = 1
+    elif (cache_placement_type == "2W"):
+        width = 2
+    elif (cache_placement_type == "4W"):
+        width = 4
+    elif (cache_placement_type == "FA"):
+        width = block_count
+    else:
+        width = 1
+        print("Invalid cache placement type")
+
+    #adjust block_count as needed
+    block_count = int(block_count / width)
+
     #build the Cache, initializing every element with junk data (validBit == 0)
     CacheMatrix = [[CacheClass() for x in range(width)]
                    for y in range(block_count)]
@@ -34,7 +47,7 @@ def buildCache(cache_size, block_size, cache_placement_type, write_policy):
 cache_size_list = [1024, 4096, 65536,
                    131072]  #1K, 4K, 64K, 128K TODO add 1024 back in
 block_size = 8
-cache_placement_type = "D"
+cache_placement_type = "DM"
 write_policy = "WB"
 
 wFile = open("myTest3.result",
