@@ -11,6 +11,10 @@ class CacheClass:
     validBit = 0
     Tag = 0x0000
     dirtyBit = 0
+    priority = 0  # use for LRU. The higher the priority, the more likely it will be picked.
+    # for DM max will be 0, for 2W 1, for 4W 3, but for FA will be as big as the cache
+    # this is the inefficiency in this scheme. Should be fine for simulation, but would
+    # pose an issue in hardware for FA.
 
 
 def buildCache(cache_size, block_size, cache_placement_type, write_policy):
@@ -46,7 +50,8 @@ def buildCache(cache_size, block_size, cache_placement_type, write_policy):
 
 cache_size_list = [1024, 4096, 65536,
                    131072]  #1K, 4K, 64K, 128K TODO add 1024 back in
-cache_placement_type_list = ["DM", "2W", "4W", "FA"]
+cache_placement_type_list = ["DM", "2W", "4W",
+                             "FA"]  # TODO add back "DM", "2W", "4W",
 block_size_list = [8, 16, 32, 128]
 write_policy = "WB"
 
@@ -80,6 +85,7 @@ for cache_size in cache_size_list:
             file1 = file.readlines()
             for x in file1:
 
+                #debugFile.write(cache_placement_type)
                 numReads = numReads + 1  #todo change name
                 #print(x)
                 #if the line starts with "r" (read), read function
@@ -101,9 +107,8 @@ for cache_size in cache_size_list:
                     theTag = int(convertedAddress / cache_size)
                     theIndex = int(
                         convertedAddress / block_size) % the_block_count
-                    debugString = "Read.	address: 0x" + address + "	Index: " + str(
-                        theIndex) + "	Tag: " + str(
-                            theTag) + "	" + hitString + "\n"
+                    debugString = "Read.	address: 0x" + address + "	Tag: " + str(
+                        theTag) + "	" + hitString + "\n"
                     debugFile.write(debugString)
 
                 elif (x[0] == "w"):
@@ -123,9 +128,8 @@ for cache_size in cache_size_list:
                     theTag = int(convertedAddress / cache_size)
                     theIndex = int(
                         convertedAddress / block_size) % the_block_count
-                    debugString = "Write.	address: 0x" + address + "	Index: " + str(
-                        theIndex) + "	Tag: " + str(
-                            theTag) + "	" + hitString + "\n"
+                    debugString = "Write.	address: 0x" + address + "	Tag: " + str(
+                        theTag) + "	" + hitString + "\n"
                     debugFile.write(debugString)
 
             hitRate = numHits / numReads

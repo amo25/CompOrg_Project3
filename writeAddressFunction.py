@@ -15,43 +15,60 @@ def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix,
 
     #modify the_block_count based on cache_placement_type
     if (the_cache_placement_type == "2W"):
-        the_block_count = the_block_count / 2
+        width = 2
     elif (the_cache_placement_type == "4W"):
-        the_block_count = the_block_count / 4
+        width = 4
     elif (the_cache_placement_type == "FA"):
-        the_block_count = 1
+        width = num_elements
+    else:
+        width = 1
     #else the block count stays the same
+
+    the_block_count = the_block_count / width
 
     theTag = int(convertedAddress /
                  the_cache_size)  # tag = floor(memoryAddress/cacheSize)
     theIndex = int(
         convertedAddress / the_block_size) % the_block_count  # index = floor
+    theIndex = int(theIndex)
     #I don't think we care about block offset (which byte inside block), because we don't care about the actual data. Could be wrong TODO
 
-    #next, update the tag and valid bit at a specified index.
-    # TODO add in dirtyBit modification based on write policy.
+    #LOOP THROUGH AND CHECK IF WE GET A HIT! IF NOT, USE LRU!
+    for i in range(width):
+        if ((the_cache_matrix[theIndex][i].validBit == 1)
+                and (the_cache_matrix[theIndex][i].Tag == theTag)):
 
-    if (the_cache_placement_type == "2W"):
-        line_at_index = random.randint(
-            0, 1
-        )  #change either the 0'th or 1'st line at the found index for 2Way (randomly)
-    elif (the_cache_placement_type == "4W"):
-        line_at_index = random.randint(0, 3)
-    elif (the_cache_placement_type == "FA"):
-        line_at_index = random.randint(
-            0, num_elements - 1)  #todo check that this works
-    else:
-        line_at_index = 0
+            address_hit = True
+            the_cache_matrix[theIndex][i].validBit = 1
+            the_cache_matrix[theIndex][i].Tag = theTag
+            # TODO add in dirtyBit modification based on write policy.
+            return (the_cache_matrix, address_hit)
 
-    line_at_index = int(line_at_index)
-    theIndex = int(theIndex)
-    if ((the_cache_matrix[theIndex][line_at_index].validBit == 1)
-            and (the_cache_matrix[theIndex][line_at_index].Tag == theTag)):
-        address_hit = True
-    else:
-        address_hit = False
-        the_cache_matrix[theIndex][line_at_index].validBit = 1
-        the_cache_matrix[theIndex][line_at_index].Tag = theTag
+    #IF WE MISS, USE LRU
+    #loop through the width of the index and find the biggest priority.
+    # set the line at index to the location of this priority
+    max = 0
+    line_at_index = 0
+    for i in range(width):
+        temp = the_cache_matrix[theIndex][i].priority
+        if (temp > max):
+            max = temp
+            line_at_index = i
+
+    #once we've picked which block we're replacing, reset it's priority to 0.
+    # increment the rest of the priorities
+    for i in range(width):
+        if (i == line_at_index):
+            the_cache_matrix[theIndex][i].priority = 0
+        else:
+            the_cache_matrix[theIndex][
+                i].priority = the_cache_matrix[theIndex][i].priority + 1
+
+    line_at_index = int(line_at_index)  #TODO MODIFY THIS
+
+    address_hit = False
+    the_cache_matrix[theIndex][line_at_index].validBit = 1
+    the_cache_matrix[theIndex][line_at_index].Tag = theTag
 
     return (
         the_cache_matrix, address_hit

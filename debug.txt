@@ -1,30 +1,31 @@
-Write.	address: 0x0EC26FAC	Index: 223	Tag: 1889	miss
-Write.	address: 0x73486BE0	Index: 215	Tag: 14756	miss
-Write.	address: 0x004E89D0	Index: 275	Tag: 39	miss
-Write.	address: 0x9D5831C8	Index: 99	Tag: 20140	miss
-Write.	address: 0x9D5831A0	Index: 99	Tag: 20140	miss
-Read.	address: 0x004E89C4	Index: 275	Tag: 39	hit
-Write.	address: 0x25D9767C	Index: 748	Tag: 4844	miss
-Write.	address: 0x004E89E0	Index: 275	Tag: 39	miss
-Read.	address: 0x9D5831FC	Index: 99	Tag: 20140	hit
-Read.	address: 0x9D583148	Index: 98	Tag: 20140	hit
-Write.	address: 0x73486BEC	Index: 215	Tag: 14756	miss
-Write.	address: 0x25D976B4	Index: 749	Tag: 4844	miss
-Read.	address: 0x9D58315C	Index: 98	Tag: 20140	hit
-Write.	address: 0x73486BFC	Index: 215	Tag: 14756	miss
-Write.	address: 0x9D583234	Index: 100	Tag: 20140	miss
-Read.	address: 0x316B0EB4	Index: 541	Tag: 6325	miss
-Read.	address: 0x316B0EB0	Index: 541	Tag: 6325	hit
-Write.	address: 0x25D97684	Index: 749	Tag: 4844	miss
-Read.	address: 0xD19744F8	Index: 649	Tag: 26827	miss
-Read.	address: 0x812037D8	Index: 111	Tag: 16528	miss
-Read.	address: 0x25D97674	Index: 748	Tag: 4844	hit
-Write.	address: 0x0EC26FB4	Index: 223	Tag: 1889	miss
-Read.	address: 0x9D58317C	Index: 98	Tag: 20140	hit
-Read.	address: 0x9D58313C	Index: 98	Tag: 20140	hit
-Write.	address: 0x25D9769C	Index: 749	Tag: 4844	miss
-Read.	address: 0x316B0EBC	Index: 541	Tag: 6325	miss
-Write.	address: 0x004E89F4	Index: 275	Tag: 39	miss
-Read.	address: 0x316B0EC8	Index: 541	Tag: 6325	hit
-Write.	address: 0x004E8A14	Index: 276	Tag: 39	miss
-Write.	address: 0x25D976D0	Index: 749	Tag: 4844	miss
+Write.	address: 0x0EC26FAC	Tag: 1889	miss
+Write.	address: 0x73486BE0	Tag: 14756	miss
+Write.	address: 0x004E89D0	Tag: 39	miss
+Write.	address: 0x9D5831C8	Tag: 20140	miss
+Write.	address: 0x9D5831A0	Tag: 20140	hit
+Read.	address: 0x004E89C4	Tag: 39	hit
+Write.	address: 0x25D9767C	Tag: 4844	miss
+Write.	address: 0x004E89E0	Tag: 39	hit
+Read.	address: 0x9D5831FC	Tag: 20140	hit
+Read.	address: 0x9D583148	Tag: 20140	hit
+Write.	address: 0x73486BEC	Tag: 14756	hit
+Write.	address: 0x25D976B4	Tag: 4844	hit
+Read.	address: 0x9D58315C	Tag: 20140	hit
+Write.	address: 0x73486BFC	Tag: 14756	hit
+Write.	address: 0x9D583234	Tag: 20140	hit
+Read.	address: 0x316B0EB4	Tag: 6325	miss
+Read.	address: 0x316B0EB0	Tag: 6325	hit
+Write.	address: 0x25D97684	Tag: 4844	hit
+Read.	address: 0xD19744F8	Tag: 26827	miss
+Read.	address: 0x812037D8	Tag: 16528	miss
+Read.	address: 0x25D97674	Tag: 4844	hit
+Write.	address: 0x0EC26FB4	Tag: 1889	hit
+Read.	address: 0x9D58317C	Tag: 20140	hit
+Read.	address: 0x9D58313C	Tag: 20140	hit
+Write.	address: 0x25D9769C	Tag: 4844	hit
+Read.	address: 0x316B0EBC	Tag: 6325	hit
+Write.	address: 0x004E89F4	Tag: 39	hit
+Read.	address: 0x316B0EC8	Tag: 6325	hit
+Write.	address: 0x004E8A14	Tag: 39	hit
+Write.	address: 0x25D976D0	Tag: 4844	hit
+it
