@@ -55,7 +55,8 @@ def readAddress(the_address, the_cache_size, the_block_size, the_cache_matrix,
     else:
         line_at_index = 0
 
-    the_cache_matrix[theIndex][line_at_index].validBit = 1
+    the_cache_matrix[theIndex][
+        line_at_index].validBit = 1  #todo changed line_at_index to 0 on a whim (non random read replacement)
     the_cache_matrix[theIndex][line_at_index].Tag = theTag
 
     return False
