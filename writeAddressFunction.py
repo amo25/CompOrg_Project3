@@ -4,7 +4,7 @@ import random
 
 
 def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix,
-                 the_cache_placement_type):
+                 the_cache_placement_type, the_bcache2mem, the_write_policy):
 
     #convert the_address to an int
     convertedAddress = int(the_address, 16)  #convert base 16 string to an int
@@ -24,12 +24,14 @@ def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix,
         width = 1
     #else the block count stays the same
 
-    the_block_count = the_block_count / width
+    blocks_per_way = the_block_count / width
+    bytes_per_way = the_cache_size / width
 
     theTag = int(convertedAddress /
-                 the_cache_size)  # tag = floor(memoryAddress/cacheSize)
+                 bytes_per_way)  # tag = floor(memoryAddress/#bytes per way)
     theIndex = int(
-        convertedAddress / the_block_size) % the_block_count  # index = floor
+        convertedAddress / the_block_size
+    ) % blocks_per_way  # index = floor(address/#bytes per block) % #blocks per way
     theIndex = int(theIndex)
     #I don't think we care about block offset (which byte inside block), because we don't care about the actual data. Could be wrong TODO
 
@@ -42,7 +44,9 @@ def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix,
             the_cache_matrix[theIndex][i].validBit = 1
             the_cache_matrix[theIndex][i].Tag = theTag
             # TODO add in dirtyBit modification based on write policy.
-            return (the_cache_matrix, address_hit)
+            the_cache_matrix[theIndex][
+                i].dirtyBit = 1  # any time you write, set dirty bit to 1
+            return (the_cache_matrix, address_hit, the_bcache2mem)
 
     #IF WE MISS, USE LRU
     #loop through the width of the index and find the biggest priority.
@@ -66,10 +70,17 @@ def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix,
 
     line_at_index = int(line_at_index)  #TODO MODIFY THIS
 
+    #on write miss, send block to memory if we're doing WB method
+    if (the_write_policy == "WB"
+            and the_cache_matrix[theIndex][line_at_index].dirtyBit == 1):
+        the_bcache2mem = the_bcache2mem + the_block_size
+
+    #any time you write, set dirty bit to 1
+    the_cache_matrix[theIndex][line_at_index].dirtyBit = 1
     address_hit = False
     the_cache_matrix[theIndex][line_at_index].validBit = 1
     the_cache_matrix[theIndex][line_at_index].Tag = theTag
 
     return (
-        the_cache_matrix, address_hit
+        the_cache_matrix, address_hit, the_bcache2mem
     )  #finally, return the cache matrix. We can optimize this later, if pass by reference is available in python. TODO if too slow

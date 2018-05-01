@@ -21,11 +21,8 @@ def buildCache(cache_size, block_size, cache_placement_type, write_policy):
 
     #For direct mapped, valid bit set to 1 when data is put in a line in the cache. Handles possible bad data at start
 
-    #todo change width
     block_count = int(cache_size / block_size)
 
-    #create a list of height "block_count" and width: TODO
-    #width, height
     if (cache_placement_type == "DM"):
         width = 1
     elif (cache_placement_type == "2W"):
@@ -55,9 +52,18 @@ cache_placement_type_list = ["DM", "2W", "4W",
 block_size_list = [8, 16, 32, 128]
 write_policy_list = ["WB", "WT"]
 
-wFile = open("myTest3.result",
+wFile = open("myTest1.result",
              "w+")  #overwrite original result. TODO change name
+debugFile = open("debug.txt", "w+")
+debugFile.close()
 wFile.close()
+
+#TODO debug
+debugFile = open("debug.txt", "a+")
+
+#store results
+wFile = open("myTest1.result",
+             "a+")  #todo open these before loop? Close at end of loop?
 
 for cache_size in cache_size_list:
     for block_size in block_size_list:
@@ -65,6 +71,12 @@ for cache_size in cache_size_list:
             for write_policy in write_policy_list:
                 CacheMatrix = buildCache(cache_size, block_size,
                                          cache_placement_type, write_policy)
+
+                #TODO debug
+                debugString = "\n" + str(cache_size) + " " + str(
+                    block_size
+                ) + " " + cache_placement_type + " " + write_policy + "\n"
+                debugFile.write(debugString)
 
                 #keep track of how many bytes are transferred from memory to cache
                 bmem2cache = 0
@@ -78,15 +90,7 @@ for cache_size in cache_size_list:
                 numHits = 0
                 #todo parse all the files in the folder? Or just "test.trace"?
                 #parse the file
-                file = open("test3.trace", "r")  #todo change name
-
-                #store results
-                wFile = open(
-                    "myTest3.result",
-                    "a+")  #todo open these before loop? Close at end of loop?
-
-                #TODO debug
-                debugFile = open("debug.txt", "w+")
+                file = open("test1.trace", "r")  #todo change name
 
                 #read the file line by line
                 file1 = file.readlines()
@@ -98,9 +102,9 @@ for cache_size in cache_size_list:
                     #if the line starts with "r" (read), read function
                     if (x[0] == "r"):
                         address = x[7:15]
-                        addressHit = readAddress(address, cache_size,
-                                                 block_size, CacheMatrix,
-                                                 cache_placement_type)
+                        (addressHit, bcache2mem) = readAddress(
+                            address, cache_size, block_size, CacheMatrix,
+                            cache_placement_type, bcache2mem, write_policy)
 
                         #todo counter
                         if (addressHit):
@@ -111,9 +115,6 @@ for cache_size in cache_size_list:
                             #grow bmem2cache accordingly
                             bmem2cache = bmem2cache + block_size
 
-                            #if we miss, if WB then we need to write the block to memory before overwriting it
-                            if (write_policy == "WB"):
-                                bcache2mem = bcache2mem + block_size
                             hitString = "miss"  #debug
 
                         # debug
@@ -122,19 +123,21 @@ for cache_size in cache_size_list:
                         theTag = int(convertedAddress / cache_size)
                         theIndex = int(
                             convertedAddress / block_size) % the_block_count
+
                         debugString = "Read.	address: 0x" + address + "	Tag: " + str(
-                            theTag) + "	" + hitString + "\n"
+                            theTag) + "	index: " + str(
+                                theIndex) + " " + "	" + hitString + "\n"
                         debugFile.write(debugString)
 
                     elif (x[0] == "w"):
                         address = x[8:16]
-                        (CacheMatrix, addressHit) = writeAddress(
+                        (CacheMatrix, addressHit, bcache2mem) = writeAddress(
                             address, cache_size, block_size, CacheMatrix,
-                            cache_placement_type)
+                            cache_placement_type, bcache2mem, write_policy)
 
-                        #when we're writing, on write through we always write a BYTE to memory
+                        #when we're writing, on write through we always write a WORD to memory (2 BYTES!)
                         if (write_policy == "WT"):
-                            bcache2mem = bcache2mem + 1
+                            bcache2mem = bcache2mem + 4
 
                         if (addressHit):
                             numHits = numHits + 1
@@ -151,7 +154,8 @@ for cache_size in cache_size_list:
                         theIndex = int(
                             convertedAddress / block_size) % the_block_count
                         debugString = "Write.	address: 0x" + address + "	Tag: " + str(
-                            theTag) + "	" + hitString + "\n"
+                            theTag) + "	index: " + str(
+                                theIndex) + " " + hitString + "\n"
                         debugFile.write(debugString)
 
                 hitRate = numHits / numReads
