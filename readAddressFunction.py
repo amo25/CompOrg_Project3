@@ -39,8 +39,17 @@ def readAddress(the_address, the_cache_size, the_block_size, the_cache_matrix,
     #Now, loop through all possible places
     for i in range(width):
         if ((the_cache_matrix[theIndex][i].validBit == 1)
-                and (the_cache_matrix[theIndex][i].Tag == theTag)):
-            return (True, the_bcache2mem)  #if we get something, it's a hit!
+                and (the_cache_matrix[theIndex][i].Tag == theTag)
+            ):  #if we get something, it's a hit!
+            #if we get a hit, reset priority to 0 and increment the rest of the priorities
+            for k in range(width):
+                if (k == i):
+                    the_cache_matrix[theIndex][k].priority = 0
+                else:
+                    the_cache_matrix[theIndex][
+                        k].priority = the_cache_matrix[theIndex][i].priority + 1
+
+            return (True, the_bcache2mem)
 
     #if we don't get a hit, we need to update cache so that it gets the data. In this case, just set valid bit to 1 and tag to the Tag
     #choose LRU to set
