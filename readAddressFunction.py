@@ -47,7 +47,7 @@ def readAddress(the_address, the_cache_size, the_block_size, the_cache_matrix,
                     the_cache_matrix[theIndex][k].priority = 0
                 else:
                     the_cache_matrix[theIndex][
-                        k].priority = the_cache_matrix[theIndex][i].priority + 1
+                        k].priority = the_cache_matrix[theIndex][k].priority + 1
 
             return (True, the_bcache2mem)
 

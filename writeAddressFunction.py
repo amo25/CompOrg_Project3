@@ -46,6 +46,12 @@ def writeAddress(the_address, the_cache_size, the_block_size, the_cache_matrix,
             # TODO add in dirtyBit modification based on write policy.
             the_cache_matrix[theIndex][
                 i].dirtyBit = 1  # any time you write, set dirty bit to 1
+            for k in range(width):
+                if (k == i):
+                    the_cache_matrix[theIndex][k].priority = 0
+                else:
+                    the_cache_matrix[theIndex][
+                        k].priority = the_cache_matrix[theIndex][k].priority + 1
             return (the_cache_matrix, address_hit, the_bcache2mem)
 
     #IF WE MISS, USE LRU

@@ -52,7 +52,7 @@ cache_placement_type_list = ["DM", "2W", "4W",
 block_size_list = [8, 16, 32, 128]
 write_policy_list = ["WB", "WT"]
 
-wFile = open("myTest1.result",
+wFile = open("myTest3.result",
              "w+")  #overwrite original result. TODO change name
 debugFile = open("debug.txt", "w+")
 debugFile.close()
@@ -62,7 +62,7 @@ wFile.close()
 debugFile = open("debug.txt", "a+")
 
 #store results
-wFile = open("myTest1.result",
+wFile = open("myTest3.result",
              "a+")  #todo open these before loop? Close at end of loop?
 
 for cache_size in cache_size_list:
@@ -90,7 +90,7 @@ for cache_size in cache_size_list:
                 numHits = 0
                 #todo parse all the files in the folder? Or just "test.trace"?
                 #parse the file
-                file = open("test1.trace", "r")  #todo change name
+                file = open("test3.trace", "r")  #todo change name
 
                 #read the file line by line
                 file1 = file.readlines()
